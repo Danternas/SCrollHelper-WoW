@@ -1,6 +1,6 @@
 ## Interface: 90100
-## Title: ShadowCrescentRollSystem
-## Notes: My very first addon.
+## Title: Shadow Crescent Roll Helper
+## Notes: A simple addon to aid in rolling. Designed primarily for roleplaying events.
 ## Author: Danternas (Thomas Johansson) (C) All Rights Reserved.
 ## Version: 0.2 Alpha
 ## DefaultState: enabled

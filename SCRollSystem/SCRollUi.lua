@@ -1,32 +1,4 @@
--- -- (2)
--- -- f:SetBackdrop( { 
--- --     bgFile = "Interface/Tooltips/UI-Tooltip-Background",
--- --     edgeFile = "Interface/Tooltips/UI-Tooltip-Border", 
--- --     tile = true, tileSize = 16, edgeSize = 16, 
--- --     insets = { left = 0, right = 0, top = 0, bottom = 0 }
--- --   });
--- -- f:SetBackdropColor(0, 0, 0, .5)
--- -- f:SetBackdropBorderColor(0, 0, 0)
-
--- -- (3)
--- f:EnableMouse(true)
--- f:SetMovable(true)
--- f:RegisterForDrag("LeftButton")
--- f:SetScript("OnDragStart", f.StartMoving)
--- f:SetScript("OnDragStop", f.StopMovingOrSizing)
--- f:SetScript("OnHide", f.StopMovingOrSizing)
-
--- -- (4)
--- local close = CreateFrame("Button", "YourCloseButtonName", f, "UIPanelCloseButton")
--- close:SetPoint("TOPRIGHT", f, "TOPRIGHT")
--- close:SetScript("OnClick", function()
--- 	f:Hide()
--- end)
-
--- -- (5)
--- local text = f:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
--- text:SetPoint("CENTER")
--- text:SetText("Hello World!")
+-- Ui module
 
 -- Namespaces
 local _, SCRollSystem = ...;
@@ -34,11 +6,16 @@ SCRollSystem.MakeUi = {};
 local MakeUi = SCRollSystem.MakeUi;
 local UIConfig;
 
-print("SCrollsystem - Initialisation complete (SCMakeUi.lua)") -- Troubleshooting
+-- helper function to throw errors.
+local function UIError( msg )
+    print(msg);
+end
+
+UIError("SCrollsystem - Initialisation complete (SCMakeUi.lua)"); -- Troubleshooting
 
 -- Function to toggle the Ui visible or not. If no Ui then create one.
 function SCRollSystem.ToggleUi ()
-    print ("Toggling ui.")  -- Troubleshooting
+    UIError("Toggle function - Toggling ui.");  -- Troubleshooting
     local menu = UIConfig or MakeUi:CreateMenu();
     SCRollFrame:SetShown(not menu:IsShown());
 end
@@ -64,47 +41,86 @@ function MakeUi:CreateMenu()
     UIConfig.title = UIConfig:CreateFontString(nil, "OVERLAY");
     UIConfig.title:SetFontObject("GameFontHighlight");
     UIConfig.title:SetPoint("CENTER", UIConfig.TitleBg, "CENTER", 0, -2);
-    UIConfig.title:SetText("Shadow Crescent Roll System");
+    UIConfig.title:SetText("Shadow Crescent Roll Helper");
 
-    -- Buttons
 
+
+    -- Input boxes
+    -- Input number of dice
+    UIConfig.attackBoxDice = CreateFrame("EditBox",nil, UIConfig, "InputBoxTemplate");
+    UIConfig.attackBoxDice:SetWidth(30)
+	UIConfig.attackBoxDice:SetHeight(150)
+	UIConfig.attackBoxDice:SetPoint("CENTER", UIConfig, "TOP", 0, -40);
+	UIConfig.attackBoxDice:SetMaxLetters(3)
+
+    -- Input number of sides
+    UIConfig.attackBoxSides = CreateFrame("EditBox",nil, UIConfig, "InputBoxTemplate");
+    UIConfig.attackBoxSides:SetWidth(30)
+	UIConfig.attackBoxSides:SetHeight(150)
+	UIConfig.attackBoxSides:SetPoint("CENTER", UIConfig, "TOP", 40, -40);
+	UIConfig.attackBoxSides:SetMaxLetters(3)
+
+    -- Input number of bonuses    
+    UIConfig.attackBoxBonuses = CreateFrame("EditBox",nil, UIConfig, "InputBoxTemplate");
+    UIConfig.attackBoxBonuses:SetWidth(30)
+	UIConfig.attackBoxBonuses:SetHeight(150)
+	UIConfig.attackBoxBonuses:SetPoint("CENTER", UIConfig, "TOP", 80, -40);
+	UIConfig.attackBoxBonuses:SetMaxLetters(3)
+
+    -- Buttons//
     -- Attack button
     UIConfig.attackButton = CreateFrame("Button", nil, UIConfig, "GameMenuButtonTemplate");
-    UIConfig.attackButton:SetPoint("CENTER", UIConfig, "TOP", 140, -80);
+    UIConfig.attackButton:SetPoint("CENTER", UIConfig, "TOP", 140, -40);
     UIConfig.attackButton:SetSize(80, 16);
-    UIConfig.attackButton:SetText("Roll");
+    UIConfig.attackButton:SetText("Roll!");
     UIConfig.attackButton:SetNormalFontObject("GameFontNormalLarge");
     UIConfig.attackButton:SetHighlightFontObject("GameFontHighlightLarge");
+    UIConfig.attackButton:SetScript("OnClick", function()
+
+        -- Get the values from the input boxes, or 0.
+        local diceValue = UIConfig.attackBoxDice:GetText() or 0;
+        local sidesValue = UIConfig.attackBoxSides:GetText() or 0;
+        local bonusesValue = UIConfig.attackBoxBonuses:GetText() or 0;
+
+        UIError("BOTTONCLICK! Attack with ",attackValue); -- Troubleshooting
+
+        SCRollSystem.CallRoll(diceValue,sidesValue,bonusesValue)
+    end);
 
     -- UIConfig.attackButton:SetPushedFontObject("");
 
-    -- Attack slider
-    UIConfig.attackSlider = CreateFrame("Slider", nil, UIConfig, "OptionsSliderTemplate");
-    UIConfig.attackSlider:SetPoint("CENTER", UIConfig, "TOP", 0, -80);
-    UIConfig.attackSlider:SetMinMaxValues(0,100);
-    UIConfig.attackSlider:SetValue(0);
-    UIConfig.attackSlider:SetValueStep(1);
-    UIConfig.attackSlider:SetObeyStepOnDrag(true);
-
     -- Defence button
     UIConfig.defenceButton = CreateFrame("Button", nil, UIConfig, "GameMenuButtonTemplate");
-    UIConfig.defenceButton:SetPoint("CENTER", UIConfig, "TOP", 140, -40);
+    UIConfig.defenceButton:SetPoint("CENTER", UIConfig, "TOP", 140, -80);
     UIConfig.defenceButton:SetSize(80, 16);
-    UIConfig.defenceButton:SetText("Roll");
+    UIConfig.defenceButton:SetText("Roll!");
     UIConfig.defenceButton:SetNormalFontObject("GameFontNormalLarge");
     UIConfig.defenceButton:SetHighlightFontObject("GameFontHighlightLarge");
+    UIConfig.defenceButton:SetScript("OnClick", function()
+        UIError("BOTTONCLICK! Defence with ",defenceSliderValue); -- Troubleshooting
+        SCRollSystem.CallRoll(1,defenceSliderValue)
+    end);
 
     -- UIConfig.defenceButton:SetPushedFontObject("");
 
-    -- Defence slider
-    UIConfig.defenceSlider = CreateFrame("Slider", nil, UIConfig, "OptionsSliderTemplate");
-    UIConfig.defenceSlider:SetPoint("CENTER", UIConfig, "TOP", 0, -40);
-    UIConfig.defenceSlider:SetMinMaxValues(0,100);
-    UIConfig.defenceSlider:SetValue(0);
-    UIConfig.defenceSlider:SetValueStep(1);
-    UIConfig.defenceSlider:SetObeyStepOnDrag(true);
+    -- -- Sliders//
+    -- -- Attack slider
+    -- UIConfig.attackSlider = CreateFrame("Slider", nil, UIConfig, "OptionsSliderTemplate");
+    -- UIConfig.attackSlider:SetPoint("CENTER", UIConfig, "TOP", 0, -80);
+    -- UIConfig.attackSlider:SetMinMaxValues(2,100);
+    -- UIConfig.attackSlider:SetValue(20);
+    -- UIConfig.attackSlider:SetValueStep(1);
+    -- UIConfig.attackSlider:SetObeyStepOnDrag(true);
+    -- UIConfig.attackSlider:SetScript("OnValueChanged", function(self,SliderValue) -- Set the roll value when the slider is moved
+    --     attackSliderValue = SliderValue;
+    --     UIError("SLIDERCHANGE! ", attackSliderValue); -- Troubleshooting
+    --     attackButtonText = "Roll " .. attackSliderValue; -- Change the text on the button 1/2
+    --     UIConfig.attackButton:SetText(attackButtonText); -- Change the text on the button 2/2
+    -- end);
 
-    UIConfig:Hide();
-    return UIConfig;
+
+
+    UIConfig:Hide(); -- Start hidden
+    return UIConfig; -- Return
 
 end
