@@ -29,22 +29,33 @@
 -- text:SetText("Hello World!")
 
 -- Namespaces
-local _, SCRollSystem = ...
+local _, SCRollSystem = ...;
+SCRollSystem.MakeUi = {};
+local MakeUi = SCRollSystem.MakeUi;
+local UIConfig;
 
--- function ToggleUi ()
---     local mainframe = UIConfig or MakeUi();
---     SCRollFrame:SetShown(not menu:IsShown());
--- end
+print("SCrollsystem - Initialisation complete (SCMakeUi.lua)") -- Troubleshooting
 
-print("SCrollsystem - Initialisation complete (SCMakeUi.lua)")
+-- Function to toggle the Ui visible or not. If no Ui then create one.
+function SCRollSystem.ToggleUi ()
+    print ("Toggling ui.")  -- Troubleshooting
+    local menu = UIConfig or MakeUi:CreateMenu();
+    SCRollFrame:SetShown(not menu:IsShown());
+end
 
 -- Function to make the Ui
-function SCRollSystem.MakeUi () 
+function MakeUi:CreateMenu()
 
     -- Create the UI frame
-    local UIConfig = CreateFrame("Frame", "SCRollFrame", UIParent, "BasicFrameTemplateWithInset");
+    UIConfig = CreateFrame("Frame", "SCRollFrame", UIParent, "BasicFrameTemplateWithInset");
     UIConfig:SetPoint("CENTER");
     UIConfig:SetSize(400,400);
+    UIConfig:SetMovable(true);
+    UIConfig:EnableMouse(true);
+    UIConfig:SetFrameStrata("HIGH")
+    UIConfig:RegisterForDrag("LeftButton");
+    UIConfig:SetScript("OnDragStart", UIConfig.StartMoving);
+    UIConfig:SetScript("OnDragStop", UIConfig.StopMovingOrSizing);
 
     -- Clsoe button
     local close = CreateFrame("Button", "MainUiclose", f, "UIPanelCloseButton")
@@ -92,5 +103,8 @@ function SCRollSystem.MakeUi ()
     UIConfig.defenceSlider:SetValue(0);
     UIConfig.defenceSlider:SetValueStep(1);
     UIConfig.defenceSlider:SetObeyStepOnDrag(true);
+
+    UIConfig:Hide();
+    return UIConfig;
 
 end

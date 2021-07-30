@@ -2,10 +2,10 @@
 ## Title: ShadowCrescentRollSystem
 ## Notes: My very first addon.
 ## Author: Danternas (Thomas Johansson) (C) All Rights Reserved.
-## Version: 0.1 Alpha
+## Version: 0.2 Alpha
 ## DefaultState: enabled
 
-SCRollCommands.lua
-SCRollMakeUi.lua
+SCRollUi.lua
 SCRollRoll.lua
+SCRollCommands.lua
 SCRollMain.lua
