@@ -1,0 +1,11 @@
+## Interface: 90100
+## Title: ShadowCrescentRollSystem
+## Notes: My very first addon.
+## Author: Danternas (Thomas Johansson) (C) All Rights Reserved.
+## Version: 0.1 Alpha
+## DefaultState: enabled
+
+SCRollCommands.lua
+SCRollMakeUi.lua
+SCRollRoll.lua
+SCRollMain.lua
