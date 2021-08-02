@@ -2,13 +2,13 @@
 ## Title: Shadow Crescent Roll Helper
 ## Notes: A simple addon to aid in rolling. Designed primarily for roleplaying events.
 ## Author: Danternas (Thomas Johansson) (C) All Rights Reserved.
-## Version: 0.4 Alpha
+## Version: 0.5 Alpha
 ## DefaultState: enabled
 ## SavedVariablesPerCharacter: SCrollHelperDB
-## Contact: dev.danternas@gmail.com
+# Contact: dev.danternas@gmail.com
 
 ## How to use:
-Use /scroll or /scrollhelper to toggle the meny. 
+Use /scroll or /scrollhelper to toggle the menu. 
 
 Use the checkboxes to choose what rows to save for next login.
 
