@@ -17,13 +17,6 @@ function rollcommand(msg, editBox)
         SCRollHelper.UIError("SCRollHelper - Empty message recognised"); -- Troubleshooting
         MakeUi:ToggleUi ()
         return
-        -- Else make a roll
-    -- elseif string.find( msg:lower(), "(%d*)[dD](%d+)([+-]?)(%d*)" ) then
-    elseif string.find( msg:lower(), "(%d*)" ) then
-        local sides = msg:lower();
-        local dices = 1
-        SCRollHelper.UIError("SCRollHelper - Roll recognised! " .. " Dices:" .. dices .. " Sides:" .. sides .. " Command:" .. msg); -- Troubleshooting
-        SCRollHelper.CallRoll (dices,sides)
     else
         SCRollHelper.UIError("SCRollHelper - Error: Cannot recognise command"); -- Troubleshooting
     end
