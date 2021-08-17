@@ -2,6 +2,7 @@
 
 -- Namespace
 local _, SCRollHelper = ...;
+SCRollHelper.globalRolling = false;
 
 -- Some basics
 SCrollHelperCurrentDB = {}; -- Initalise main database

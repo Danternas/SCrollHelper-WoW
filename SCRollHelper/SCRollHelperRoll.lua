@@ -27,6 +27,9 @@ function SCRollHelper.CallRoll (incDices,incSides,incBonuses,incName)
     commonBonuses = incBonuses;
     commonName = incName;
 
+    -- Set that rolling is going on so events knows doesn't discard the roll
+    SCRollHelper.globalRolling = true;
+
     -- Get roll(s) from server
     for i = 1, incDices do RandomRoll( 1, incSides);    	
     SCRollHelper.UIError("Roll:" .. i); -- Troubleshooting
@@ -68,8 +71,8 @@ function SCRollHelper.MessageRoll (rollvalue)
 
     -- Assemble and print the string
     local strSend = commonName .. " roll of: " .. (commonBonuses+rollvalue) .. " " .. "(" -- row 1/2
-        .. commonDices .."-" .. commonSides .. ")" .. negpos .. commonBonuses; -- row 2/2
-    print (strSend)
+        .. commonDices .."-" .. commonSides .. ") " .. negpos .. " " .. commonBonuses; -- row 2/2
+    SendSystemMessage(strSend);
 end
 
 -- Experimental function to unpack msg word by word (Does not work)

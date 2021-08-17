@@ -2,7 +2,7 @@
 ## Title: Shadow Crescent Roll Helper
 ## Notes: A simple addon to aid in rolling. Designed primarily for roleplaying events.
 ## Author: Danternas (Thomas Johansson); Copyright (c) 2021 Danternas (See LICENCE.txt)
-## Version: 0.4 Alpha
+## Version: 0.5 Alpha
 ## DefaultState: enabled
 ## SavedVariablesPerCharacter: SCrollHelperDB
 # Contact: dev.danternas@gmail.com

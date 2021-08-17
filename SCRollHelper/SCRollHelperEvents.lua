@@ -11,8 +11,10 @@ eventFrame:RegisterEvent("CHAT_MSG_SYSTEM"); -- Fired whenever there is a system
 
 -- OnEvent function for CHAT_MSG_SYSTEM (Catching System Messages)
 eventFrame:SetScript("OnEvent",function(self,event,msg)-- OnEvent handler receives event triggers
-    if event == "CHAT_MSG_SYSTEM" and string.find(msg,"%w+%srolls%s%d+%s%(%d+-%d+%)") ~= nil then -- Check if correct format. System message in the form of "name rolls X (Y-Z)"
+    -- Check if correct format. System message in the form of "name rolls X (Y-Z)". ALso check if rolling is going on.
+    if event == "CHAT_MSG_SYSTEM" and string.find(msg,"%w+%srolls%s%d+%s%(%d+-%d+%)") ~= nil and SCRollHelper.globalRolling == true then 
         SCRollHelper.processRollMessage (msg)
+        SCRollHelper.globalRolling = false; -- Set rolling to false (not going on)
     end
 
     if event == "ADDON_LOADED" and msg == "SCRollHelper" then -- On login
