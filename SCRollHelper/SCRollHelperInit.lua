@@ -1,16 +1,17 @@
 -- Main module
 
--- Namespace
+-- Namespaces and global variables
 local _, SCRollHelper = ...;
 SCRollHelper.globalRolling = false;
+SCRollHelper.globalBonusesValue = 0;
 
 -- Some basics
 SCrollHelperCurrentDB = {}; -- Initalise main database
-troubleshootingEnabled = false; -- True if troubleshooting is enabled
+troubleshootingEnabled = true; -- "true"" if troubleshooting is enabled
 
 -- helper function to throw errors.
 function SCRollHelper.UIError( msg )
-    if troubleshootingEnabled ==  true then
+    if troubleshootingEnabled ==  false then
         print(msg);
     end
 end
@@ -24,25 +25,27 @@ function SCRollHelper.CleanNils(array)
     return sorted -- Return the sorted array
 end
 
--- Function to turn yBtnOffset into a relative position
-function SCRollHelper.detrowpos (yBtnOffset)
-    rowpos = ((yBtnOffset * -1)-20)/30; -- Multiply by -1 to turn positive, remove 20 and then get what multiple by 30 it is.
-    return rowpos
-end
-
--- Function to call on creating the saved Ui
+-- Function to load in all the saved variables
 function SCRollHelper.loadSavedVariables ()
 
-    SCRollHelper.UIError("SCRollHelper.loadSavedVariable - Loading SavedVariables for Ui creation"); -- Troubleshooting
+    -- Copy SavedVariables into Database, or create a new Database if one doesn't exist.
+    SCrollHelperCurrentDB = SCrollHelperDB or {RollRow={},Settings={},GlobalBonus=0,CurrentVersion="v0.6 Alpha"};
 
-    for _, i in ipairs(SCrollHelperCurrentDB["RollRow"]) do -- Iterate the Database
-        incDices, incSides, incBonuses, incName = unpack(i);
+    -- Load global roll bonus, or set it to 0
+    SCRollHelper.globalBonusesValue = SCrollHelperCurrentDB["GlobalBonus"] or 0;
 
-        SCRollHelper.UIError("SCRollHelper.loadSavedVariable - Found: " .. incDices .. incSides .. incBonuses .. incName);
-
-        SCRollHelper.setupNewRow (incDices,incSides,incBonuses,incName,true)
+    -- Check version - If version data doesn't exist then wipe the database (For version 0.6)
+    if SCrollHelperCurrentDB["CurrentVersion"] ~= "v0.6 Alpha" then
+        SendSystemMessage("SCRollHelper - Database error or old database -> Resetting the addon's SavedVariables."); 
+        SCrollHelperCurrentDB = {RollRow={},Settings={},GlobalBonus=0,CurrentVersion="v0.6 Alpha"} -- Make a new working database
     end
+
+    -- Load the current version
+    SCRollHelper.CurrentVersion = SCrollHelperCurrentDB["CurrentVersion"];
+
+    SCRollHelper.UIError("SCRollHelper (SCRollHelperInit.lua) - Savedvariables loaded. globalBonusesValue is " .. SCRollHelper.globalBonusesValue);
+
 end
 
-SCRollHelper.UIError("SCRollHelper - Initialisation complete (SCRollHelperInit.lua)"); -- Troubleshooting
+SCRollHelper.UIError("SCRollHelper (SCRollHelperInit.lua) - Initialisation complete "); -- Troubleshooting
 

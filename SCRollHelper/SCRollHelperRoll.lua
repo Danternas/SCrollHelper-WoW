@@ -9,16 +9,19 @@ SCRollHelper.UIError("SCRollHelper - Initialisation complete (SCRollRoll.lua)");
 commonDices = 0;
 commonSides = 0;
 commonBonuses = 0;
+commonGlobalBonuses = 0;
 commonName = "";
 
 -- Function to call a server roll
-function SCRollHelper.CallRoll (incDices,incSides,incBonuses,incName)
+function SCRollHelper.CallRoll (incDices,incSides,incBonuses,incGlobalBonuses,incName)
   
     -- Check dice numbers
-    if incDices == 0   then    return SCRollHelper.UIError( "You must have at least one die." );            end
-    if incDices > 10   then    return SCRollHelper.UIError( "You can only roll 10 dice at a time." );       end
-    if incSides < 2    then    return SCRollHelper.UIError( "Must have at least two sides." );              end
-    if incSides > 1000 then    return SCRollHelper.UIError( "Dice cannot have more than 1000 sides." );     end
+    if incDices == 0   then    return SendSystemMessage( "SCRollHelper - You must have at least one die." );            end
+    if incDices > 1   then    return SendSystemMessage( "SCRollHelper - You can only roll 1 dice at the moment. Work in progress." );       end
+    if incSides < 2    then    return SendSystemMessage( "SCRollHelper - Must have at least two sides." );              end
+    if incSides > 1000 then    return SendSystemMessage( "SCRollHelper - Dice cannot have more than 1000 sides." );     end
+    if incBonuses > 1000 then    return SendSystemMessage( "SCRollHelper - You can't add more than 1000 as a bonus." );     end
+    if incGlobalBonuses > 1000 then    return SendSystemMessage( "SCRollHelper - You can't add more than 1000 as a bonus." );     end
     SCRollHelper.UIError("Dice check done!"); -- Troubleshooting
 
     -- Set the common values
@@ -26,6 +29,7 @@ function SCRollHelper.CallRoll (incDices,incSides,incBonuses,incName)
     commonSides = incSides;
     commonBonuses = incBonuses;
     commonName = incName;
+    commonGlobalBonuses = incGlobalBonuses;
 
     -- Set that rolling is going on so events knows doesn't discard the roll
     SCRollHelper.globalRolling = true;
@@ -41,12 +45,18 @@ end
 
 -- Function to turn the raw system roll message into data we can handle
 function SCRollHelper.processRollMessage (msg)
+    SCRollHelper.UIError ("SCRollHelper (SCRollHelperRoll.lua//SCRollHelper.processRollMessage) - Incomming roll process call. msg = " .. msg); -- Troubleshooting
     msg = string.gsub(msg,"%s%(%d+-%d+%)","") -- Cut out the back part
-    SCRollHelper.UIError (msg); -- Troubleshooting
+    SCRollHelper.UIError ("SCRollHelper (SCRollHelperRoll.lua//SCRollHelper.processRollMessage) - Processing... " .. msg); -- Troubleshooting
     msg = string.gsub(msg,"%srolls%s","") -- Cut out the middle part
-    SCRollHelper.UIError (msg);  -- Troubleshooting
-    for i in string.gmatch(msg,"%a+") do player = i  end -- Should be player name
-    for i in string.gmatch(msg,"%d+") do rollvalue = i  end -- Should be the roll value
+    SCRollHelper.UIError ("SCRollHelper (SCRollHelperRoll.lua//SCRollHelper.processRollMessage) - Processing... " .. msg); -- Troubleshooting
+
+    for i in string.gmatch(msg,"%d+") do rollvalue = i  end -- Remaining number should be the roll value
+    msg = string.gsub(msg,"%d+","") -- Cut out the number
+    SCRollHelper.UIError ("SCRollHelper (SCRollHelperRoll.lua//SCRollHelper.processRollMessage) - rollvalue extracted: " .. rollvalue); -- Troubleshooting
+
+    player = msg -- Remainder should be player name
+    SCRollHelper.UIError ("SCRollHelper (SCRollHelperRoll.lua//SCRollHelper.processRollMessage) - player|msg extracted: " .. player .. "|" .. msg); -- Troubleshooting
 
     SCRollHelper.UIError( "Eventcatcher:" .. rollvalue .. " " .. commonBonuses); -- Troubleshooting
 
@@ -57,21 +67,27 @@ function SCRollHelper.processRollMessage (msg)
 
 end
 
+-- Function to return + or - depending on if the number is negative or positive
+function negposCheck (incValue) 
+    if incValue >= 0 then
+        return "+" -- If positive
+    else
+        return "" -- If negative
+    end
+end
+
 -- Function to turn the roll data into a message for the player
 function SCRollHelper.MessageRoll (rollvalue)
     SCRollHelper.UIError("Starting function MessageRoll with value " .. rollvalue); -- Troubleshooting
     SCRollHelper.UIError("Bonus is " .. commonBonuses); -- Troubleshooting
 
-    -- Set if a + or - should be used depending on if the number is negative or positive
-    if commonBonuses >= 0 then
-        negpos = "+" -- If positive
-    else
-        negpos = "" -- If negative
-    end
+    -- Check if the values are negative or positive
+    negposBonus = negposCheck (commonBonuses);
+    negposBonusGlobal = negposCheck (commonGlobalBonuses);
 
     -- Assemble and print the string
-    local strSend = commonName .. " roll of: " .. (commonBonuses+rollvalue) .. " " .. "(" -- row 1/2
-        .. commonDices .."-" .. commonSides .. ") " .. negpos .. " " .. commonBonuses; -- row 2/2
+    local strSend = "SCRollHelper - " .. commonName .. " rolls: " .. (rollvalue+commonBonuses+commonGlobalBonuses) .. " " .. "(" .. commonDices .. "D" -- row 1/2
+        .. commonSides .. negposBonus .. commonBonuses .. negposBonusGlobal .. commonGlobalBonuses .. ")"; -- row 2/2
     SendSystemMessage(strSend);
 end
 
